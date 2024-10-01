@@ -5,10 +5,10 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
+from src.bots.application.bot_service import BotService
+from src.bots.application.dto import BotDTO, CreateBotDTO, FilterBotDTO, UpdateBotDTO
 from src.core.errors import APIErrorMessage
 from src.di import Container
-from src.users.application.dto import CreateUserDTO, FilterUserDTO, UpdateUserDTO, UserDTO
-from src.users.application.user_service import UserService
 from src.users.controllers.deps import get_current_user
 
 router = APIRouter(
@@ -17,15 +17,15 @@ router = APIRouter(
 
 
 @router.get(
-    "/users/",
-    response_model=List[UserDTO],
+    "/bots/",
+    response_model=List[BotDTO],
     responses={400: {"model": APIErrorMessage}, 500: {"model": APIErrorMessage}},
-    tags=["users"],
+    tags=["bots"],
 )
 @inject
 async def get_all(
-    service: UserService = Depends(
-        Provide[Container.user_service],
+    service: BotService = Depends(
+        Provide[Container.bot_service],
     ),
 ) -> JSONResponse:
     result = await service.get_all()
@@ -34,71 +34,69 @@ async def get_all(
 
 
 @router.get(
-    "/users/filter/",
-    response_model=List[UserDTO],
+    "/bots/filter/",
+    response_model=List[BotDTO],
     responses={400: {"model": APIErrorMessage}, 500: {"model": APIErrorMessage}},
-    tags=["users"],
+    tags=["bots"],
 )
 @inject
-async def get_filtered_users(
-    filter: FilterUserDTO = Depends(),
-    service: UserService = Depends(
-        Provide[Container.user_service],
+async def get_filtered_bots(
+    filter: FilterBotDTO = Depends(),
+    service: BotService = Depends(
+        Provide[Container.bot_service],
     ),
 ) -> JSONResponse:
-    result = await service.get_users_by_filter(filter.model_dump())
+    result = await service.get_bots_by_filter(filter.model_dump())
     json_result = [json.loads(item.model_dump_json()) for item in result]
     return JSONResponse(content=json_result, status_code=status.HTTP_200_OK)
 
 
 @router.get(
-    "/users/{user_id}",
-    response_model=UserDTO,
+    "/bots/{bot_id}",
+    response_model=BotDTO,
     responses={400: {"model": APIErrorMessage}, 500: {"model": APIErrorMessage}},
-    tags=["users"],
+    tags=["bots"],
 )
 @inject
-async def get_user(user_id: int, service: UserService = Depends(Provide[Container.user_service])) -> JSONResponse:
-    result = await service.get_user_by_id(id=user_id)
+async def get_bot(bot_id: int, service: BotService = Depends(Provide[Container.bot_service])) -> JSONResponse:
+    result = await service.get_bot_by_id(id=bot_id)
     return JSONResponse(content=json.loads(result.model_dump_json()), status_code=status.HTTP_200_OK)
 
 
 @router.post(
-    "/users/",
-    response_model=UserDTO,
+    "/bots/",
+    response_model=BotDTO,
     responses={400: {"model": APIErrorMessage}, 500: {"model": APIErrorMessage}},
-    tags=["users"],
+    tags=["bots"],
 )
 @inject
-async def create_user(
-    request: CreateUserDTO, service: UserService = Depends(Provide[Container.user_service])
+async def create_bot(
+    request: CreateBotDTO, service: BotService = Depends(Provide[Container.bot_service])
 ) -> JSONResponse:
-    result = await service.create_user(request)
+    result = await service.create_bot(request)
     return JSONResponse(content=json.loads(result.model_dump_json()), status_code=status.HTTP_201_CREATED)
 
 
 @router.put(
-    "/users/{user_id}",
-    response_model=UserDTO,
+    "/bots/{bot_id}",
+    response_model=BotDTO,
     responses={400: {"model": APIErrorMessage}, 500: {"model": APIErrorMessage}},
-    tags=["users"],
+    tags=["bots"],
 )
 @inject
-async def update_user(
-    request: UpdateUserDTO, user_id: int, service: UserService = Depends(Provide[Container.user_service])
+async def update_bot(
+    request: UpdateBotDTO, bot_id: int, service: BotService = Depends(Provide[Container.bot_service])
 ) -> JSONResponse:
-    result = await service.update_user(id=user_id, input_dto=request)
+    result = await service.update_bot(id=bot_id, input_dto=request)
     return JSONResponse(content=json.loads(result.model_dump_json()), status_code=status.HTTP_201_CREATED)
 
 
 @router.delete(
-    "/users/{user_id}",
+    "/bots/{bot_id}",
     responses={400: {"model": APIErrorMessage}, 500: {"model": APIErrorMessage}},
-    tags=["users"],
+    tags=["bots"],
 )
 @inject
-async def delete_user(
-    user_id: int | str, service: UserService = Depends(Provide[Container.user_service])
-) -> JSONResponse:
-    result = await service.delete_user(id=user_id)
+async def delete_bot(bot_id: int | str, service: BotService = Depends(Provide[Container.bot_service])) -> JSONResponse:
+    result = await service.delete_bot(id=bot_id)
     return JSONResponse(content=(result), status_code=status.HTTP_200_OK)

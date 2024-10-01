@@ -5,8 +5,8 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, HTTPException, Request, status
 from jose import JWTError, jwt
 
+from src.di import Container
 from src.users.application.user_service import UserService
-from src.users.di import UserContainer as Container
 
 
 def get_token(request: Request):

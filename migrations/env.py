@@ -7,6 +7,7 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+from src.bots.infrastructure.models.bot_model import *
 from src.core.base_model import BaseModel
 from src.users.infrastructure.models.user_model import *
 

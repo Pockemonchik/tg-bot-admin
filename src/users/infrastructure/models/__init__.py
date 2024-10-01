@@ -1,6 +1,3 @@
 __all__ = {"UserModel"}
 
-
-from .user_model import UserModel
-
-UserModel()
+from src.users.infrastructure.models.user_model import UserModel

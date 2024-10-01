@@ -7,17 +7,19 @@ from fastapi.openapi.utils import get_openapi
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 
+from src.bots.controllers.bot_controller import router as bot_router
 from src.core.errors import APIErrorMessage, DomainError, RepositoryError, ResourceNotFound
+from src.di import Container
 from src.users.controllers.auth_controller import router as auth_router
 from src.users.controllers.user_controller import router as users_router
-from src.users.di import UserContainer
 
 
 def create_app() -> FastAPI:
     app = FastAPI()
     app.include_router(auth_router)
     app.include_router(users_router)
-    container = UserContainer()
+    app.include_router(bot_router)
+    container = Container()
     app.container = container
     return app
 

@@ -5,10 +5,10 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
 from src.core.errors import APIErrorMessage
+from src.di import Container
 from src.users.application.dto import CreateUserDTO, UserDTO
 from src.users.application.schemas import AuthUserShema
 from src.users.application.user_service import UserService
-from src.users.di import UserContainer as Container
 
 router = APIRouter()
 
