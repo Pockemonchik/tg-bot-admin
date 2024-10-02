@@ -1,5 +1,7 @@
+from sqlite3 import DatabaseError
 from typing import Any, List
 
+import sqlalchemy
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,6 +10,7 @@ from src.bots.domain.bot_entity import BotEntity
 from src.bots.domain.bot_repo import IBotRepository
 from src.bots.domain.errors import BotErrorNotFound
 from src.bots.infrastructure.models.bot_model import BotModel
+from src.core.errors import RepositoryError
 
 
 class BotPostgresRepository(IBotRepository):
@@ -40,11 +43,17 @@ class BotPostgresRepository(IBotRepository):
             return None
 
     async def add_one(self, new_bot: CreateBotDTO) -> BotEntity | Any:
-        new_bot_model = self.model(**new_bot.model_dump())
-        self.session.add(new_bot_model)  # type: ignore
-        await self.session.commit()
-        await self.session.close()
-        return new_bot_model.to_domain()
+        try:
+            new_bot_model = self.model(**new_bot.model_dump())
+            self.session.add(new_bot_model)  # type: ignore
+            await self.session.commit()
+            await self.session.close()
+            return new_bot_model.to_domain()
+        except DatabaseError as e:
+            if isinstance(e, sqlalchemy.exc.IntegrityError):
+                raise BotErrorNotFound((f"User with id={new_bot.owner_id} was not found!"))
+            else:
+                raise RepositoryError
 
     async def update_one(self, id: int, bot_update: UpdateBotDTO) -> BotEntity | Any:
         obj = await self.session.get(

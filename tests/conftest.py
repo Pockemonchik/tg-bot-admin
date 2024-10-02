@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.db_postgres import AsyncPostgresDatabaseManager
 from src.main import app
 from src.users.application.user_service import UserService
-from src.users.infrastructure.postgres_user_repo import UserPostgresRepository
+from src.users.infrastructure.user_postgres__repo import UserPostgresRepository
 
 nest_asyncio.apply()
 

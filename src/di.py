@@ -2,12 +2,14 @@ import os
 
 from dependency_injector import containers, providers
 
+from src.bots.application.bot_client_service import BotClientService
 from src.bots.application.bot_service import BotService
-from src.bots.infrastructure.postgres_bot_repo import BotPostgresRepository
+from src.bots.infrastructure.repositories.bot_client_postgres_repo import BotClientPostgresRepository
+from src.bots.infrastructure.repositories.bot_postgres_repo import BotPostgresRepository
 from src.core.db_postgres import AsyncPostgresDatabaseManager
 from src.users.application.auth_service import AuthService
 from src.users.application.user_service import UserService
-from src.users.infrastructure.postgres_user_repo import UserPostgresRepository
+from src.users.infrastructure.user_postgres__repo import UserPostgresRepository
 
 
 class Container(containers.DeclarativeContainer):
@@ -41,7 +43,19 @@ class Container(containers.DeclarativeContainer):
         BotPostgresRepository,
         session=async_session,
     )
+    bot_client_posgtgres_repository = providers.Factory(
+        BotClientPostgresRepository,
+        session=async_session,
+    )
 
     user_service = providers.Factory(UserService, user_repo=user_posgtgres_repository)
     auth_service = providers.Factory(AuthService, user_service=user_service)
-    bot_service = providers.Factory(BotService, repo=bot_posgtgres_repository)
+    bot_service = providers.Factory(
+        BotService,
+        bot_repo=bot_posgtgres_repository,
+        clients_repo=bot_client_posgtgres_repository,
+    )
+    bot_client_service = providers.Factory(
+        BotClientService,
+        clients_repo=bot_client_posgtgres_repository,
+    )

@@ -25,3 +25,16 @@ class FilterBotDTO(BaseModel):
 class CreateBotDTO(BaseModel):
     botname: str
     owner_id: int
+
+
+class BotClientDTO(BaseModel):
+    id: int
+    name: str
+    bot_id: int
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+
+
+class CreateBotClientDTO(BaseModel):
+    name: str
+    bot_id: int

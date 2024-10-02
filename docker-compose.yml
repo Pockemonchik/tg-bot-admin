@@ -19,6 +19,19 @@ services:
       #   - db
       # restart: always 
 
+  mongodb:
+      image: mongo:latest
+      volumes:
+        - ./data/mongo:/data/db
+      ports:
+        - "27017-27019:27017-27019"
+
+  # redis:
+  #   image: 'redis:alpine' 
+  #   hostname: redis
+  #   ports:
+  #     - 6379:6379
+
   postgres:
     image: postgres:13.0-alpine
     volumes:

@@ -2,24 +2,24 @@ from abc import ABC, abstractmethod
 from typing import Any, List
 
 from src.bots.application.dto import UpdateBotDTO
-from src.bots.domain.bot_entity import BotEntity
+from src.bots.domain.bot_client_entity import BotClientEntity
 
 
-class IBotRepository(ABC):
+class IBotClientRepository(ABC):
     @abstractmethod
-    async def get_one(self, id: int) -> BotEntity | None:
+    async def get_one(self, id: int) -> BotClientEntity | None:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_all(self) -> list[BotEntity]:
+    async def get_all(self) -> list[BotClientEntity]:
         raise NotImplementedError
 
     @abstractmethod
-    async def add_one(self, new_bot: BotEntity) -> BotEntity:
+    async def add_one(self, new_bot: BotClientEntity) -> BotClientEntity:
         raise NotImplementedError
 
     @abstractmethod
-    async def update_one(self, id: int, bot_update: UpdateBotDTO) -> BotEntity | Any:
+    async def update_one(self, id: int, bot_update: UpdateBotDTO) -> BotClientEntity | Any:
         raise NotImplementedError
 
     @abstractmethod
@@ -27,5 +27,5 @@ class IBotRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def filter_by_field(self, params: dict) -> List[BotEntity] | None:
+    async def filter_by_field(self, field: str) -> List[BotClientEntity] | None:
         raise NotImplementedError
