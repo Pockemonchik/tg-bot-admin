@@ -2,6 +2,7 @@ from typing import List
 
 from dependency_injector.wiring import inject
 
+from src.bots.application.dto import BotDTO
 from src.users.application.dto import CreateUserDTO, UserDTO
 from src.users.domain.user_entity import UserEntity
 from src.users.domain.user_repo import IUserRepository
@@ -17,7 +18,11 @@ class UserService:
 
     @staticmethod
     def user_entity_to_dto(user_entity_obj: UserEntity) -> UserDTO:
+        bots = []
+        if user_entity_obj.bots:
+            bots = [BotDTO(**vars(tag)) for tag in user_entity_obj.bots]
         user_dict = vars(user_entity_obj)
+        user_dict["bots"] = bots
         user_dto = UserDTO(**user_dict)
         return user_dto
 

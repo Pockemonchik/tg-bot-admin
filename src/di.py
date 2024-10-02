@@ -37,10 +37,6 @@ class Container(containers.DeclarativeContainer):
         session=async_session,
     )
 
-    # Mongo inject
-
-    # Service inject
-    # service = providers.Factory(UserService, user_repo=posgtgres_repository)
     bot_posgtgres_repository = providers.Factory(
         BotPostgresRepository,
         session=async_session,

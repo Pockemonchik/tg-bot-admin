@@ -17,7 +17,7 @@ class UserModel(BaseModel):
     password: Mapped[str]
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now(), onupdate=func.now())
-    bots: Mapped[List["BotModel"]] = relationship(back_populates="owner")
+    bots: Mapped[List["BotModel"]] = relationship(back_populates="owner", lazy="subquery")
 
     def to_domain(self) -> UserEntity:
         return UserEntity(
@@ -26,6 +26,7 @@ class UserModel(BaseModel):
             password=self.password,
             created_at=self.created_at,
             updated_at=self.updated_at,
+            bots=[bot.to_domain() for bot in self.bots] if self.bots != [] else [],
         )
 
     def __str__(self) -> str:

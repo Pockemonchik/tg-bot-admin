@@ -1,17 +1,16 @@
 import datetime
+from typing import List
+
+from attr import dataclass
+
+from src.bots.domain.bot_entity import BotEntity
 
 
+@dataclass
 class UserEntity:
-    def __init__(
-        self,
-        id: int,
-        username: str,
-        password: str,
-        created_at: datetime.datetime,
-        updated_at: datetime.datetime,
-    ) -> None:
-        self.id = id
-        self.username = username
-        self.password = password
-        self.created_at = created_at
-        self.updated_at = updated_at
+    id: int
+    username: str
+    password: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    bots: List[BotEntity]

@@ -2,6 +2,8 @@ import datetime
 
 from pydantic import BaseModel
 
+from src.bots.application.dto import BotDTO
+
 
 class UserDTO(BaseModel):
     id: int
@@ -9,6 +11,7 @@ class UserDTO(BaseModel):
     password: str
     created_at: datetime.datetime
     updated_at: datetime.datetime
+    bots: list[BotDTO]
 
 
 class UpdateUserDTO(BaseModel):

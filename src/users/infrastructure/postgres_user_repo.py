@@ -2,6 +2,7 @@ from typing import Any, List
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from src.users.application.dto import CreateUserDTO, UpdateUserDTO
 from src.users.domain.errors import UserErrorNotFound
@@ -20,6 +21,7 @@ class UserPostgresRepository(IUserRepository):
         obj = await self.session.get(
             self.model,
             id,
+            options=[joinedload(self.model.bots)],
         )  # type: ignore
         await self.session.commit()
         if obj == None:
@@ -29,8 +31,22 @@ class UserPostgresRepository(IUserRepository):
             await self.session.close()
             return obj.to_domain()
 
+    async def get_one_as_model(self, id: int) -> UserModel | Any:
+        obj = await self.session.get(
+            self.model,
+            id,
+            options=[joinedload(self.model.bots)],
+        )  # type: ignore
+        await self.session.commit()
+        if obj == None:
+            await self.session.close()
+            raise UserErrorNotFound((f"User with id={id} was not found!"))
+        else:
+            await self.session.close()
+            return obj
+
     async def get_all(self) -> List[UserEntity] | None:
-        stmt = select(self.model)  # type: ignore
+        stmt = select(self.model).options(joinedload(self.model.bots))  # type: ignore
         obj = await self.session.execute(stmt)
         await self.session.close()
         if obj:
@@ -41,49 +57,33 @@ class UserPostgresRepository(IUserRepository):
 
     async def add_one(self, new_user: CreateUserDTO) -> UserEntity | Any:
         new_user_model = self.model(**new_user.model_dump())
-        self.session.add(new_user_model)  # type: ignore
+        self.session.add(new_user_model)
         await self.session.commit()
         await self.session.close()
-        return new_user_model.to_domain()
+        return await self.get_one(id=new_user_model.id)
 
     async def update_one(self, id: int, user_update: UpdateUserDTO) -> UserEntity | Any:
-        obj = await self.session.get(
-            self.model,
-            id,
-        )  # type: ignore
-        if obj == None:
-            await self.session.close()
-            raise UserErrorNotFound((f"User with id={id} was not found!"))
-        else:
-            for name, value in user_update.model_dump().items():
-                setattr(obj, name, value)
-            result = obj.to_domain()
-            await self.session.commit()
-            await self.session.close()
-            return result
+        obj = await self.get_one_as_model(id=id)
+        for name, value in user_update.model_dump().items():
+            setattr(obj, name, value)
+        result = obj.to_domain()
+        await self.session.commit()
+        await self.session.close()
+        return result
 
     async def delete_one(self, id: int) -> int | None:
-        obj = await self.session.get(
-            self.model,
-            int(id),
-        )  # type: ignore
+        obj = await self.get_one_as_model(id=id)
+        await self.session.delete(obj)
         await self.session.commit()
-        if obj == None:
-            await self.session.close()
-            raise UserErrorNotFound((f"User with id={id} was not found!"))
-        else:
-            # obj.tags = []
-            await self.session.delete(obj)
-            await self.session.commit()
-            await self.session.close()
-            return id
+        await self.session.close()
+        return id
 
     async def filter_by_field(self, params: dict) -> List[UserEntity] | None:
         filters = []
         for key, value in params.items():
             if value != None:
                 filters.append(getattr(self.model, key) == value)
-        stmt = select(self.model).filter(*filters)
+        stmt = select(self.model).filter(*filters).options(joinedload(self.model.tags))
         obj = await self.session.execute(stmt)
         await self.session.commit()
         if obj:
