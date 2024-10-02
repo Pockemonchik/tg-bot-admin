@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any, List
 
 from src.bots.application.dto import UpdateBotDTO
-from src.bots.domain.bot_entity import BotEntity
+from src.bots.domain.entities.bot_entity import BotEntity
 
 
 class IBotRepository(ABC):

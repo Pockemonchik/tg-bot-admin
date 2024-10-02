@@ -19,7 +19,7 @@ services:
       #   - db
       # restart: always 
 
-  mongodb:
+  mongo:
       image: mongo:latest
       volumes:
         - ./data/mongo:/data/db

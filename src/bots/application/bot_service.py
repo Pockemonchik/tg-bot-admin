@@ -3,16 +3,14 @@ from typing import List
 from dependency_injector.wiring import inject
 
 from src.bots.application.dto import BotDTO, CreateBotDTO
-from src.bots.domain.bot_client_repo import IBotClientRepository
-from src.bots.domain.bot_entity import BotEntity
-from src.bots.domain.bot_repo import IBotRepository
+from src.bots.domain.entities.bot_entity import BotEntity
+from src.bots.domain.repositories.bot_repo import IBotRepository
 
 
 @inject
 class BotService:
-    def __init__(self, bot_repo: IBotRepository, clients_repo: IBotClientRepository) -> None:
+    def __init__(self, bot_repo: IBotRepository) -> None:
         self.bot_repo = bot_repo
-        self.clients_repo = clients_repo
 
     @staticmethod
     def bot_entity_to_dto(bot_entity_obj: BotEntity) -> BotDTO:

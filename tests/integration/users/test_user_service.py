@@ -2,7 +2,7 @@ import pytest
 
 from src.users.application.dto import CreateUserDTO, UpdateUserDTO, UserDTO
 from src.users.application.user_service import UserService
-from src.users.infrastructure.postgres_user_repo import UserPostgresRepository
+from src.users.infrastructure.user_postgres__repo import UserPostgresRepository
 
 
 @pytest.mark.usefixtures("seed_users_db")

@@ -5,12 +5,12 @@ from bson import ObjectId
 from pymongo.database import Database
 
 from src.bots.application.dto import CreateBotEventEntityDTO, UpdateBotEventEntityDTO
-from src.bots.domain.bot_event_entity import BotEventEntity
-from src.bots.domain.bot_event_repo import IBotEventRepository
+from src.bots.domain.entities.bot_event_entity import BotEventEntity
 from src.bots.domain.errors import BotEventEntityError, BotEventEntityErrorNotFound
+from src.bots.domain.repositories.bot_event_repo import IBotEventRepository
 
 
-class BotEventEntityMongoRepository(IBotEventRepository):
+class BotEventMongoRepository(IBotEventRepository):
 
     def __init__(self, db: Database):
         self._collection = db.get_collection("bot_events")

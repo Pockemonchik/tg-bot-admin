@@ -1,8 +1,8 @@
 from dependency_injector.wiring import inject
 
 from src.bots.application.dto import BotClientDTO, BotDTO, CreateBotDTO
-from src.bots.domain.bot_client_entity import BotClientEntity
-from src.bots.domain.bot_client_repo import IBotClientRepository
+from src.bots.domain.entities.bot_client_entity import BotClientEntity
+from src.bots.domain.repositories.bot_client_repo import IBotClientRepository
 
 
 @inject

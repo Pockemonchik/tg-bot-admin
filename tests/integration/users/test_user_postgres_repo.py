@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_scoped_session
 
 from src.users.application.dto import CreateUserDTO, UpdateUserDTO
 from src.users.domain.user_entity import UserEntity
-from src.users.infrastructure.postgres_user_repo import UserPostgresRepository
+from src.users.infrastructure.user_postgres__repo import UserPostgresRepository
 
 
 @pytest.mark.usefixtures("seed_users_db")

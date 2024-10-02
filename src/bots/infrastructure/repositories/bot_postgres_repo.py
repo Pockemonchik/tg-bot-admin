@@ -6,9 +6,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.bots.application.dto import CreateBotDTO, UpdateBotDTO
-from src.bots.domain.bot_entity import BotEntity
-from src.bots.domain.bot_repo import IBotRepository
+from src.bots.domain.entities.bot_entity import BotEntity
 from src.bots.domain.errors import BotErrorNotFound
+from src.bots.domain.repositories.bot_repo import IBotRepository
 from src.bots.infrastructure.models.bot_model import BotModel
 from src.core.errors import RepositoryError
 

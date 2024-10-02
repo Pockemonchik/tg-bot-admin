@@ -3,7 +3,7 @@ from typing import List
 
 from attr import dataclass
 
-from src.bots.domain.bot_entity import BotEntity
+from src.bots.domain.entities.bot_entity import BotEntity
 
 
 @dataclass

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, List
 from sqlalchemy import ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.bots.domain.bot_entity import BotEntity
+from src.bots.domain.entities.bot_entity import BotEntity
 from src.core.base_model import BaseModel
 
 if TYPE_CHECKING:
