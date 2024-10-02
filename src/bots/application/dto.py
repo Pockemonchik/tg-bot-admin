@@ -38,3 +38,28 @@ class BotClientDTO(BaseModel):
 class CreateBotClientDTO(BaseModel):
     name: str
     bot_id: int
+
+
+class BotEventDTO(BaseModel):
+    id: str
+    bot_id: int
+    bot_client_id: int
+    type: str
+    message: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+
+
+class CreateBotEventDTO(BaseModel):
+    bot_id: int
+    bot_client_id: int
+    type: str
+    message: str
+
+
+class UpdateBotEventDTO(BaseModel):
+    id: str
+    bot_id: str
+    bot_client_id: int
+    type: str
+    message: str

@@ -1,25 +1,25 @@
 from abc import ABC, abstractmethod
 from typing import Any, List
 
-from src.users.application.dto import UpdateUserDTO
-from src.users.domain.user_entity import UserEntity
+from src.bots.application.dto import UpdateBotEventDTO
+from src.bots.domain.entities.bot_event_entity import BotEventEntity
 
 
 class IBotEventRepository(ABC):
     @abstractmethod
-    async def get_one(self, id: int) -> UserEntity | None:
+    async def get_one(self, id: int) -> BotEventEntity | None:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_all(self) -> list[UserEntity]:
+    async def get_all(self) -> list[BotEventEntity]:
         raise NotImplementedError
 
     @abstractmethod
-    async def add_one(self, new_user: UserEntity) -> UserEntity:
+    async def add_one(self, new_bot_event: BotEventEntity) -> BotEventEntity:
         raise NotImplementedError
 
     @abstractmethod
-    async def update_one(self, id: int, user_update: UpdateUserDTO) -> UserEntity | Any:
+    async def update_one(self, id: int, bot_event_update: UpdateBotEventDTO) -> BotEventEntity | Any:
         raise NotImplementedError
 
     @abstractmethod
@@ -27,5 +27,5 @@ class IBotEventRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def filter_by_field(self, field: str) -> List[UserEntity] | None:
+    async def filter_by_field(self, field: str) -> List[BotEventEntity] | None:
         raise NotImplementedError

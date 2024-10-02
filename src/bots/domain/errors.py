@@ -9,3 +9,7 @@ class BotError(DomainError):
 
 class BotErrorNotFound(ResourceNotFound):
     pass
+
+
+class BotEventErrorNotFound(ResourceNotFound):
+    pass

@@ -5,9 +5,19 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
-from src.bots.application.bot_client_service import BotClientService
-from src.bots.application.bot_service import BotService
-from src.bots.application.dto import BotClientDTO, BotDTO, CreateBotClientDTO, CreateBotDTO, FilterBotDTO, UpdateBotDTO
+from src.bots.application.dto import (
+    BotClientDTO,
+    BotDTO,
+    BotEventDTO,
+    CreateBotClientDTO,
+    CreateBotDTO,
+    CreateBotEventDTO,
+    FilterBotDTO,
+    UpdateBotDTO,
+)
+from src.bots.application.services.bot_client_service import BotClientService
+from src.bots.application.services.bot_event_service import BotEventService
+from src.bots.application.services.bot_service import BotService
 from src.core.errors import APIErrorMessage
 from src.di import Container
 from src.users.controllers.deps import get_current_user
@@ -164,12 +174,56 @@ async def get_bot_clients(
 )
 @inject
 async def create_bot_client(
+    bot_id: int,
     request: CreateBotClientDTO,
     service: BotClientService = Depends(
         Provide[Container.bot_client_service],
     ),
 ) -> JSONResponse:
     result = await service.create_bot_client(request)
+    return JSONResponse(
+        content=json.loads(result.model_dump_json()),
+        status_code=status.HTTP_201_CREATED,
+    )
+
+
+# Events
+
+
+@router.get(
+    "/bots/{bot_id}/events",
+    response_model=List[BotEventDTO],
+    responses={400: {"model": APIErrorMessage}, 500: {"model": APIErrorMessage}},
+    tags=["bot events"],
+)
+@inject
+async def get_bot_events(
+    bot_id: int,
+    service: BotEventService = Depends(Provide[Container.bot_event_service]),
+) -> JSONResponse:
+    result = await service.get_all_bot_events(bot_id=bot_id)
+    json_result = [json.loads(item.model_dump_json()) for item in result]
+    return JSONResponse(
+        content=json_result,
+        status_code=status.HTTP_200_OK,
+    )
+
+
+@router.post(
+    "/bots/{bot_id}/events",
+    response_model=BotEventDTO,
+    responses={400: {"model": APIErrorMessage}, 500: {"model": APIErrorMessage}},
+    tags=["bot events"],
+)
+@inject
+async def create_bot_event(
+    bot_id: int,
+    request: CreateBotEventDTO,
+    service: BotEventService = Depends(
+        Provide[Container.bot_event_service],
+    ),
+) -> JSONResponse:
+    result = await service.create_bot_event(bot_id=bot_id, input_dto=request)
     return JSONResponse(
         content=json.loads(result.model_dump_json()),
         status_code=status.HTTP_201_CREATED,

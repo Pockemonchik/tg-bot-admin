@@ -5,8 +5,8 @@ from attr import dataclass
 
 @dataclass
 class BotEventEntity:
-    id: int
-    bot_id: str
+    id: str
+    bot_id: int
     bot_client_id: int
     type: str
     message: str
