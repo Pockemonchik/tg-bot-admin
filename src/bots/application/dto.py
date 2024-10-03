@@ -63,3 +63,11 @@ class UpdateBotEventDTO(BaseModel):
     bot_client_id: int
     type: str
     message: str
+
+
+class FilteBotEventDTO(BaseModel):
+    bot_client_id: int | None = None
+    type: str | None = None
+    message: str | None = None
+    created_at: datetime.datetime | None = None
+    updated_at: datetime.datetime | None = None

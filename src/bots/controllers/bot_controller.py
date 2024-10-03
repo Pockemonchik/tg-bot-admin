@@ -12,6 +12,7 @@ from src.bots.application.dto import (
     CreateBotClientDTO,
     CreateBotDTO,
     CreateBotEventDTO,
+    FilteBotEventDTO,
     FilterBotDTO,
     UpdateBotDTO,
 )
@@ -198,13 +199,15 @@ async def create_bot_client(
     tags=["bot events"],
 )
 @inject
-async def get_bot_events(
+async def get_bot_events_by_bot_id(
     bot_id: int,
+    filters: FilteBotEventDTO = Depends(),
     service: BotEventService = Depends(Provide[Container.bot_event_service]),
     page_params: PageParams = Depends(),
 ) -> JSONResponse:
-    result = await service.get_all_bot_events(
+    result = await service.get_bot_events_by_bot_id(
         bot_id=bot_id,
+        filters=filters.model_dump(),
         limit=page_params.size,
         offset=(page_params.page - 1) * page_params.size,
     )

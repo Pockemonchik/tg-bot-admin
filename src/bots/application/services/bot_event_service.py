@@ -49,13 +49,15 @@ class BotEventService:
         event_dto = self.event_entity_to_dto(event_entity_obj)
         return event_dto
 
-    async def get_all_bot_events(
+    async def get_bot_events_by_bot_id(
         self,
         bot_id: int,
         limit: int | None = 0,
         offset: int | None = 0,
+        filters: dict | None = {},
     ) -> List[BotEventDTO]:
-        events = await self.event_repo.filter_by_field({"bot_id": bot_id}, limit=limit, offset=offset)
+        query_params = dict({"bot_id": bot_id}, **filters)
+        events = await self.event_repo.filter_by_field(query_params, limit=limit, offset=offset)
         event_dto_list = [self.event_entity_to_dto(event_entity_obj) for event_entity_obj in events]
         return event_dto_list
 
