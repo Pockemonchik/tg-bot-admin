@@ -62,18 +62,14 @@ class BotEventMongoRepository(IBotEventRepository):
         result = await self._collection.delete_one({"_id": ObjectId(id)})
         return result.deleted_count
 
-    async def filter_by_field(self, params: dict) -> List[BotEventEntity] | None:
+    async def filter_by_field(
+        self,
+        params: dict,
+        limit: int | None = 0,
+        offset: int | None = 0,
+    ) -> List[BotEventEntity] | None:
         params = {key: value for (key, value) in params.items() if value != None}
-        documents = await self._collection.find(params).to_list()
-
-        for document in documents:
-            document["id"] = str(document["_id"])
-            del document["_id"]
-
-        return [self.document_to_domain(document) for document in documents]
-
-    async def filter_by_tag_name(self, tag_name: str) -> List[BotEventEntity] | None:
-        documents = await self._collection.find({"tags": {"$in": [tag_name]}}).to_list()
+        documents = await self._collection.find(params).skip(offset).limit(limit).to_list()
 
         for document in documents:
             document["id"] = str(document["_id"])
