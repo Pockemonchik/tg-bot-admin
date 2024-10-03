@@ -3,6 +3,7 @@ from typing import Any
 import uvicorn
 from fastapi import FastAPI, status
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
@@ -19,6 +20,13 @@ def create_app() -> FastAPI:
     app.include_router(auth_router)
     app.include_router(users_router)
     app.include_router(bot_router)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],  # Разрешить запросы с любых источников. Можете ограничить список доменов
+        allow_credentials=True,
+        allow_methods=["*"],  # Разрешить все методы (GET, POST, PUT, DELETE и т.д.)
+        allow_headers=["*"],  # Разрешить все заголовки
+    )
     container = Container()
     app.container = container
     return app
