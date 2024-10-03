@@ -3,7 +3,7 @@ from typing import Any, List, TypeVar
 
 import sqlalchemy
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.exc import DatabaseError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -128,3 +128,14 @@ class BasePostgresRepository(AbstractRepository):
             return bot_list
         else:
             return None
+
+    async def count_by_filter(self, params: dict) -> int | None:
+        filters = []
+        for key, value in params.items():
+            if value != None:
+                filters.append(getattr(self.model, key) == value)
+        stmt = select(func.count(self.model.id)).filter(*filters)
+        obj = await self.session.execute(stmt)
+        await self.session.commit()
+        await self.session.close()
+        return obj.scalar()

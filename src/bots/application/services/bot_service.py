@@ -2,7 +2,7 @@ from typing import List
 
 from dependency_injector.wiring import inject
 
-from src.bots.application.dto import BotDTO, BotStatDTO, CreateBotDTO
+from src.bots.application.dto import BotDTO, BotStatsDTO, CreateBotDTO
 from src.bots.domain.entities.bot_entity import BotEntity
 from src.bots.domain.repositories.bot_client_repo import IBotClientRepository
 from src.bots.domain.repositories.bot_event_repo import IBotEventRepository
@@ -28,8 +28,15 @@ class BotService:
         return bot_dto
 
     # Bot stats
-    async def get_bot_statictic(self, bot_id: int) -> BotStatDTO:
-        clients_count = self.bot_client_repo.filter_by_field({"bot_id": bot_id})
+    async def get_bot_statictic(self, bot_id: int) -> BotStatsDTO:
+        clients_count = await self.bot_client_repo.count_by_filter({"bot_id": bot_id})
+        events_count = await self.bot_event_repo.count_by_filter({"bot_id": bot_id})
+        result = BotStatsDTO(
+            bot_id=bot_id,
+            clients_count=clients_count,
+            events_count=events_count,
+        )
+        return result
         # active_clients_count
         # events_count
 

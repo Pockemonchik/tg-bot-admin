@@ -15,11 +15,11 @@ class IBotEventRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def add_one(self, new_bot_event: BotEventEntity) -> BotEventEntity:
+    async def add_one(self, new_item: BotEventEntity) -> BotEventEntity:
         raise NotImplementedError
 
     @abstractmethod
-    async def update_one(self, id: int, bot_event_update: UpdateBotEventDTO) -> BotEventEntity | Any:
+    async def update_one(self, id: int, update_data: UpdateBotEventDTO) -> BotEventEntity | Any:
         raise NotImplementedError
 
     @abstractmethod
@@ -27,5 +27,11 @@ class IBotEventRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def filter_by_field(self, field: str) -> List[BotEventEntity] | None:
+    async def filter_by_field(self, params: dict) -> List[BotEventEntity] | None:
         raise NotImplementedError
+
+    @abstractmethod
+    async def count_by_filter(self, params: dict) -> int | None:
+        raise NotImplementedError
+
+    # count_documents({"status": "active"})

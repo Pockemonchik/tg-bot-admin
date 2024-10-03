@@ -9,6 +9,7 @@ from src.bots.application.dto import (
     BotClientDTO,
     BotDTO,
     BotEventDTO,
+    BotStatsDTO,
     CreateBotClientDTO,
     CreateBotDTO,
     CreateBotEventDTO,
@@ -236,4 +237,29 @@ async def create_bot_event(
     return JSONResponse(
         content=json.loads(result.model_dump_json()),
         status_code=status.HTTP_201_CREATED,
+    )
+
+
+# Stats
+
+
+@router.get(
+    "/bots/{bot_id}/stats",
+    response_model=List[BotStatsDTO],
+    responses={400: {"model": APIErrorMessage}, 500: {"model": APIErrorMessage}},
+    tags=["bot stats"],
+)
+@inject
+async def get_bot_events_by_bot_id(
+    bot_id: int,
+    filters: FilteBotEventDTO = Depends(),
+    service: BotService = Depends(Provide[Container.bot_service]),
+) -> JSONResponse:
+    result = await service.get_bot_statictic(
+        bot_id=bot_id,
+    )
+    json_result = [json.loads(result.model_dump_json())]
+    return JSONResponse(
+        content=json_result,
+        status_code=status.HTTP_200_OK,
     )

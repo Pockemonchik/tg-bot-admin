@@ -29,3 +29,7 @@ class IBotClientRepository(ABC):
     @abstractmethod
     async def filter_by_field(self, params: dict) -> List[BotClientEntity] | None:
         raise NotImplementedError
+
+    @abstractmethod
+    async def count_by_filter(self, params: dict) -> int | None:
+        raise NotImplementedError

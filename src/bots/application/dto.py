@@ -78,8 +78,8 @@ class FilteBotEventDTO(BaseModel):
     updated_at: datetime.datetime | None = None
 
 
-class BotStatDTO(BaseModel):
-    bot_id: int
-    clients_count: int
-    active_clients_count: int
-    events_count: str
+class BotStatsDTO(BaseModel):
+    bot_id: int | None = None
+    clients_count: int | None = None
+    active_clients_count: int | None = None
+    events_count: int | None = None
