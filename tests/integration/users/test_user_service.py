@@ -16,13 +16,13 @@ from src.users.infrastructure.user_postgres__repo import UserPostgresRepository
         "Postgres repo",
     ],
 )
-async def test_can_get_all_users(repo_class, session, request) -> None:
+async def test_can_find_all_users(repo_class, session, request) -> None:
     # given
     repo = repo_class(request.getfixturevalue(session))
     service = UserService(user_repo=repo)
 
     # when
-    result = await service.get_all()
+    result = await service.find_all()
 
     # then
     assert len(result) >= 3
@@ -104,7 +104,7 @@ async def test_can_update_one_user(repo_class, session, request) -> None:
     }
 
     user_update = UpdateUserDTO(**data)
-    item = await service.get_all()
+    item = await service.find_all()
     # when
     result = await service.update_user(id=item[0].id, input_dto=user_update)
 
@@ -129,7 +129,7 @@ async def test_can_delete_user(repo_class, session, request) -> None:
     # given
     repo = repo_class(request.getfixturevalue(session))
     service = UserService(user_repo=repo)
-    item = await service.get_all()
+    item = await service.find_all()
     # when
     result = await service.delete_user(id=item[0].id)
 

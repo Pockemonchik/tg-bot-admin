@@ -7,11 +7,11 @@ from src.bots.domain.entities.bot_event_entity import BotEventEntity
 
 class IBotEventRepository(ABC):
     @abstractmethod
-    async def get_one(self, id: int) -> BotEventEntity | None:
+    async def find_one(self, id: int) -> BotEventEntity | None:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_all(self) -> list[BotEventEntity]:
+    async def find_all(self) -> list[BotEventEntity]:
         raise NotImplementedError
 
     @abstractmethod

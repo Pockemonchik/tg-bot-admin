@@ -37,12 +37,12 @@ class UserService:
         return self.user_entity_to_dto(new_user)
 
     async def get_user_by_id(self, id: int) -> UserDTO:
-        user_entity_obj = await self.user_repo.get_one(id=id)
+        user_entity_obj = await self.user_repo.find_one(id=id)
         user_dto = self.user_entity_to_dto(user_entity_obj)
         return user_dto
 
-    async def get_all(self) -> List[UserDTO]:
-        notes = await self.user_repo.get_all()
+    async def find_all(self) -> List[UserDTO]:
+        notes = await self.user_repo.find_all()
         user_dto_list = [self.user_entity_to_dto(user_entity_obj) for user_entity_obj in notes]
         return user_dto_list
 

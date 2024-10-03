@@ -40,6 +40,11 @@ class CreateBotClientDTO(BaseModel):
     bot_id: int
 
 
+class UpdateBotClientDTO(BaseModel):
+    name: str | None = None
+    bot_id: int | None = None
+
+
 class BotEventDTO(BaseModel):
     id: str
     bot_id: int
@@ -71,3 +76,10 @@ class FilteBotEventDTO(BaseModel):
     message: str | None = None
     created_at: datetime.datetime | None = None
     updated_at: datetime.datetime | None = None
+
+
+class BotStatDTO(BaseModel):
+    bot_id: int
+    clients_count: int
+    active_clients_count: int
+    events_count: str

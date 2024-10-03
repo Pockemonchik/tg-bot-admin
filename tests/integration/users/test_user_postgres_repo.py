@@ -8,12 +8,12 @@ from src.users.infrastructure.user_postgres__repo import UserPostgresRepository
 
 @pytest.mark.usefixtures("seed_users_db")
 @pytest.mark.asyncio(scope="module")
-async def test_can_get_all_users(postgres_async_session: async_scoped_session[AsyncSession]) -> None:
+async def test_can_find_all_users(postgres_async_session: async_scoped_session[AsyncSession]) -> None:
     # given
     repo = UserPostgresRepository(postgres_async_session)
 
     # when
-    result = await repo.get_all()
+    result = await repo.find_all()
 
     # then
     assert len(result) >= 3
@@ -21,12 +21,12 @@ async def test_can_get_all_users(postgres_async_session: async_scoped_session[As
 
 @pytest.mark.usefixtures("seed_users_db")
 @pytest.mark.asyncio(scope="module")
-async def test_can_get_one_user(postgres_async_session: async_scoped_session[AsyncSession]) -> None:
+async def test_can_find_one_user(postgres_async_session: async_scoped_session[AsyncSession]) -> None:
     # given
     repo = UserPostgresRepository(postgres_async_session)
 
     # when
-    result = await repo.get_one(id=1)
+    result = await repo.find_one(id=1)
 
     # then
     assert type(result) == UserEntity

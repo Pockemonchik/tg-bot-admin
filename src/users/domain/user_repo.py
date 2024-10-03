@@ -7,11 +7,11 @@ from src.users.domain.user_entity import UserEntity
 
 class IUserRepository(ABC):
     @abstractmethod
-    async def get_one(self, id: int) -> UserEntity | None:
+    async def find_one(self, id: int) -> UserEntity | None:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_all(self) -> list[UserEntity]:
+    async def find_all(self) -> list[UserEntity]:
         raise NotImplementedError
 
     @abstractmethod

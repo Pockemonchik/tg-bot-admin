@@ -39,12 +39,12 @@ router = APIRouter(
     tags=["bots"],
 )
 @inject
-async def get_all(
+async def find_all(
     service: BotService = Depends(
         Provide[Container.bot_service],
     ),
 ) -> JSONResponse:
-    result = await service.get_all_bots()
+    result = await service.find_all_bots()
     json_result = [json.loads(item.model_dump_json()) for item in result]
     return JSONResponse(content=json_result, status_code=status.HTTP_200_OK)
 

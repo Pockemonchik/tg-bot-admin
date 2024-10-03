@@ -62,30 +62,28 @@ class Container(containers.DeclarativeContainer):
         BotPostgresRepository,
         session=async_session,
     )
-
-    bot_service = providers.Factory(
-        BotService,
-        bot_repo=bot_posgtgres_repository,
-    )
-
-    # clients
     bot_client_posgtgres_repository = providers.Factory(
         BotClientPostgresRepository,
         session=async_session,
     )
-    bot_client_service = providers.Factory(
-        BotClientService,
-        clients_repo=bot_client_posgtgres_repository,
-    )
-
-    # events
     bot_event_mongo_repository = providers.Factory(
         BotEventMongoRepository,
         db=async_mongo_db,
     )
 
+    # services
+    bot_service = providers.Factory(
+        BotService,
+        bot_repo=bot_posgtgres_repository,
+        bot_event_repo=bot_event_mongo_repository,
+        bot_client_repo=bot_client_posgtgres_repository,
+    )
+    bot_client_service = providers.Factory(
+        BotClientService,
+        bot_client_repo=bot_client_posgtgres_repository,
+    )
     bot_event_service = providers.Factory(
         BotEventService,
-        event_repo=bot_event_mongo_repository,
+        bot_event_repo=bot_event_mongo_repository,
         bot_repo=bot_posgtgres_repository,
     )

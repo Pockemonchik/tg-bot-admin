@@ -17,7 +17,7 @@ class UserPostgresRepository(IUserRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_one(self, id: int) -> UserEntity | Any:
+    async def find_one(self, id: int) -> UserEntity | Any:
         obj = await self.session.get(
             self.model,
             id,
@@ -31,7 +31,7 @@ class UserPostgresRepository(IUserRepository):
             await self.session.close()
             return obj.to_domain()
 
-    async def get_one_as_model(self, id: int) -> UserModel | Any:
+    async def find_one_as_model(self, id: int) -> UserModel | Any:
         obj = await self.session.get(
             self.model,
             id,
@@ -45,7 +45,7 @@ class UserPostgresRepository(IUserRepository):
             await self.session.close()
             return obj
 
-    async def get_all(self) -> List[UserEntity] | None:
+    async def find_all(self) -> List[UserEntity] | None:
         stmt = select(self.model).options(joinedload(self.model.bots))  # type: ignore
         obj = await self.session.execute(stmt)
         await self.session.close()
@@ -60,10 +60,10 @@ class UserPostgresRepository(IUserRepository):
         self.session.add(new_user_model)
         await self.session.commit()
         await self.session.close()
-        return await self.get_one(id=new_user_model.id)
+        return await self.find_one(id=new_user_model.id)
 
     async def update_one(self, id: int, user_update: UpdateUserDTO) -> UserEntity | Any:
-        obj = await self.get_one_as_model(id=id)
+        obj = await self.find_one_as_model(id=id)
         for name, value in user_update.model_dump().items():
             setattr(obj, name, value)
         result = obj.to_domain()
@@ -72,7 +72,7 @@ class UserPostgresRepository(IUserRepository):
         return result
 
     async def delete_one(self, id: int) -> int | None:
-        obj = await self.get_one_as_model(id=id)
+        obj = await self.find_one_as_model(id=id)
         await self.session.delete(obj)
         await self.session.commit()
         await self.session.close()

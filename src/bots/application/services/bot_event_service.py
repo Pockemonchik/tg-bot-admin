@@ -12,10 +12,10 @@ from src.bots.domain.repositories.bot_repo import IBotRepository
 class BotEventService:
     def __init__(
         self,
-        event_repo: IBotEventRepository,
+        bot_event_repo: IBotEventRepository,
         bot_repo: IBotRepository,
     ) -> None:
-        self.event_repo = event_repo
+        self.bot_event_repo = bot_event_repo
         self.bot_repo = bot_repo
 
     @staticmethod
@@ -29,23 +29,23 @@ class BotEventService:
     # Read
 
     async def create_bot_event(self, bot_id: int, input_dto: CreateBotEventDTO) -> BotEventDTO:
-        bot_entity_obj = await self.bot_repo.get_one(id=bot_id)
+        bot_entity_obj = await self.bot_repo.find_one(id=bot_id)
         input_dto.bot_id = bot_entity_obj.id
-        new_event = await self.event_repo.add_one(new_bot_event=input_dto)
+        new_event = await self.bot_event_repo.add_one(new_item=input_dto)
         return self.event_entity_to_dto(new_event)
 
     async def update_bot_event(self, id: int, input_dto: CreateBotEventDTO) -> BotEventDTO:
-        new_event = await self.event_repo.update_one(id=id, bot_event_update=input_dto)
+        new_event = await self.bot_event_repo.update_one(id=id, update_data=input_dto)
         return self.event_entity_to_dto(new_event)
 
     async def delete_bot_event(self, id: int) -> int | None:
-        result = await self.event_repo.delete_one(id=id)
+        result = await self.bot_event_repo.delete_one(id=id)
         return result
 
     # Write
 
     async def get_bot_event_by_id(self, id: int) -> BotEventDTO:
-        event_entity_obj = await self.event_repo.get_one(id=id)
+        event_entity_obj = await self.bot_event_repo.find_one(id=id)
         event_dto = self.event_entity_to_dto(event_entity_obj)
         return event_dto
 
@@ -57,7 +57,7 @@ class BotEventService:
         filters: dict | None = {},
     ) -> List[BotEventDTO]:
         query_params = dict({"bot_id": bot_id}, **filters)
-        events = await self.event_repo.filter_by_field(query_params, limit=limit, offset=offset)
+        events = await self.bot_event_repo.filter_by_field(query_params, limit=limit, offset=offset)
         event_dto_list = [self.event_entity_to_dto(event_entity_obj) for event_entity_obj in events]
         return event_dto_list
 
@@ -67,12 +67,6 @@ class BotEventService:
         limit: int | None = 0,
         offset: int | None = 0,
     ) -> List[BotEventEntity] | None:
-        events = await self.event_repo.filter_by_field(params=params, limit=limit, offset=offset)
+        events = await self.bot_event_repo.filter_by_field(params=params, limit=limit, offset=offset)
         event_dto_list = [self.event_entity_to_dto(event_entity_obj) for event_entity_obj in events]
         return event_dto_list
-
-    # async def get_bot_events_by_eventname_or_none(self, botname: str) -> BotEventEntity | None:
-    #     bots = await self.get_events_by_filter({"botname": botname})
-    #     if not bots:
-    #         return None
-    #     return bots[0]

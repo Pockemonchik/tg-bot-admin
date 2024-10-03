@@ -24,7 +24,7 @@ async def test_can_create_user(async_test_client: AsyncClient, request: pytest.F
 @pytest.mark.asyncio(scope="module")
 @pytest.mark.usefixtures("async_test_client")
 @pytest.mark.usefixtures("seed_users_db")
-async def test_can_get_all_users(async_test_client: AsyncClient, request: pytest.FixtureRequest) -> None:
+async def test_can_find_all_users(async_test_client: AsyncClient, request: pytest.FixtureRequest) -> None:
     # given
 
     # when

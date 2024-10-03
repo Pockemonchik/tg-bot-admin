@@ -21,7 +21,7 @@ class BotEventMongoRepository(IBotEventRepository):
 
         return bot_event
 
-    async def get_one(self, id: str) -> BotEventEntity | Any:
+    async def find_one(self, id: str) -> BotEventEntity | Any:
         print("get_1 mongo id", id)
         document = await self._collection.find_one({"_id": ObjectId(id)})
 
@@ -32,7 +32,7 @@ class BotEventMongoRepository(IBotEventRepository):
         del document["_id"]
         return self.document_to_domain(document)
 
-    async def get_all(self) -> List[BotEventEntity] | None:
+    async def find_all(self) -> List[BotEventEntity] | None:
         """Получение всех заметок"""
         documents = await self._collection.find({}).to_list()
 
@@ -48,13 +48,13 @@ class BotEventMongoRepository(IBotEventRepository):
         document["updated_at"] = datetime.now()
         result = await self._collection.insert_one(document)
 
-        return await self.get_one(id=result.inserted_id)
+        return await self.find_one(id=result.inserted_id)
 
     async def update_one(self, id: str, bot_event_update: UpdateBotEventDTO) -> BotEventEntity | Any:
         new_values = {"$set": bot_event_update.model_dump()}
         result = await self._collection.update_one({"_id": ObjectId(id)}, new_values)
         if result.modified_count == 1:
-            return await self.get_one(id=id)
+            return await self.find_one(id=id)
         else:
             raise BotEventErrorNotFound(f"err when del")
 

@@ -2,15 +2,24 @@ from typing import List
 
 from dependency_injector.wiring import inject
 
-from src.bots.application.dto import BotDTO, CreateBotDTO
+from src.bots.application.dto import BotDTO, BotStatDTO, CreateBotDTO
 from src.bots.domain.entities.bot_entity import BotEntity
+from src.bots.domain.repositories.bot_client_repo import IBotClientRepository
+from src.bots.domain.repositories.bot_event_repo import IBotEventRepository
 from src.bots.domain.repositories.bot_repo import IBotRepository
 
 
 @inject
 class BotService:
-    def __init__(self, bot_repo: IBotRepository) -> None:
+    def __init__(
+        self,
+        bot_repo: IBotRepository,
+        bot_client_repo: IBotClientRepository,
+        bot_event_repo: IBotEventRepository,
+    ) -> None:
         self.bot_repo = bot_repo
+        self.bot_client_repo = bot_client_repo
+        self.bot_event_repo = bot_event_repo
 
     @staticmethod
     def bot_entity_to_dto(bot_entity_obj: BotEntity) -> BotDTO:
@@ -18,16 +27,22 @@ class BotService:
         bot_dto = BotDTO(**bot_dict)
         return bot_dto
 
+    # Bot stats
+    async def get_bot_statictic(self, bot_id: int) -> BotStatDTO:
+        clients_count = self.bot_client_repo.filter_by_field({"bot_id": bot_id})
+        # active_clients_count
+        # events_count
+
     # Bot Crud
 
     # Read
 
     async def create_bot(self, input_dto: CreateBotDTO) -> BotDTO:
-        new_bot = await self.bot_repo.add_one(new_bot=input_dto)
+        new_bot = await self.bot_repo.add_one(new_item=input_dto)
         return self.bot_entity_to_dto(new_bot)
 
     async def update_bot(self, id: int, input_dto: CreateBotDTO) -> BotDTO:
-        new_bot = await self.bot_repo.update_one(id=id, bot_update=input_dto)
+        new_bot = await self.bot_repo.update_one(id=id, update_data=input_dto)
         return self.bot_entity_to_dto(new_bot)
 
     async def delete_bot(self, id: int) -> int | None:
@@ -37,12 +52,12 @@ class BotService:
     # Write
 
     async def get_bot_by_id(self, id: int) -> BotDTO:
-        bot_entity_obj = await self.bot_repo.get_one(id=id)
+        bot_entity_obj = await self.bot_repo.find_one(id=id)
         bot_dto = self.bot_entity_to_dto(bot_entity_obj)
         return bot_dto
 
-    async def get_all_bots(self) -> List[BotDTO]:
-        notes = await self.bot_repo.get_all()
+    async def find_all_bots(self) -> List[BotDTO]:
+        notes = await self.bot_repo.find_all()
         bot_dto_list = [self.bot_entity_to_dto(bot_entity_obj) for bot_entity_obj in notes]
         return bot_dto_list
 

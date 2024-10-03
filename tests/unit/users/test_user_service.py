@@ -9,10 +9,10 @@ from src.users.domain.user_repo import IUserRepository
 
 
 @pytest.mark.asyncio(scope="module")
-async def test_can_get_all_users() -> None:
+async def test_can_find_all_users() -> None:
     # given
     repo_mock = mock.AsyncMock(spec=IUserRepository)
-    repo_mock.get_all.return_value = [
+    repo_mock.find_all.return_value = [
         User(
             id=1,
             owner_id=1,
@@ -25,7 +25,7 @@ async def test_can_get_all_users() -> None:
     service = UserService(user_repo=repo_mock)
 
     # when
-    result = await service.get_all()
+    result = await service.find_all()
 
     # then
     assert len(result) == 1
