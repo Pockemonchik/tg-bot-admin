@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from dependency_injector.wiring import inject
@@ -28,13 +29,22 @@ class BotService:
         return bot_dto
 
     # Bot stats
-    async def get_bot_statictic(self, bot_id: int) -> BotStatsDTO:
+    async def get_bot_statictic(
+        self, bot_id: int, stat_list_len: int, start_dt: datetime, stop_dt: datetime
+    ) -> BotStatsDTO:
         clients_count = await self.bot_client_repo.count_by_filter({"bot_id": bot_id})
         events_count = await self.bot_event_repo.count_by_filter({"bot_id": bot_id})
+        events_dynamic = await self.bot_event_repo.stats_of_bot_by_interval(
+            bot_id=bot_id,
+            start_dt=start_dt,
+            stop_dt=stop_dt,
+            stat_list_len=stat_list_len,
+        )
         result = BotStatsDTO(
             bot_id=bot_id,
             clients_count=clients_count,
             events_count=events_count,
+            events_dynamic=events_dynamic,
         )
         return result
         # active_clients_count

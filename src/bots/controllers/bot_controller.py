@@ -14,6 +14,7 @@ from src.bots.application.dto import (
     CreateBotDTO,
     CreateBotEventDTO,
     FilteBotEventDTO,
+    FiltePeriodDTO,
     FilterBotDTO,
     UpdateBotDTO,
 )
@@ -250,13 +251,19 @@ async def create_bot_event(
     tags=["bot stats"],
 )
 @inject
-async def get_bot_events_by_bot_id(
+async def get_bot_stats_by_bot_id(
     bot_id: int,
+    stat_list_len: int,
+
     filters: FilteBotEventDTO = Depends(),
+    period_filter: FiltePeriodDTO = Depends(),
     service: BotService = Depends(Provide[Container.bot_service]),
 ) -> JSONResponse:
     result = await service.get_bot_statictic(
         bot_id=bot_id,
+        stat_list_len=stat_list_len,
+        start_dt=period_filter.start_dt,
+        stop_dt=period_filter.stop_dt,
     )
     json_result = [json.loads(result.model_dump_json())]
     return JSONResponse(

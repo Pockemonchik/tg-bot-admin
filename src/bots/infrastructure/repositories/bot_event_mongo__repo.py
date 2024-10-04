@@ -21,8 +21,9 @@ class BotEventMongoRepository(IBotEventRepository):
 
         return bot_event
 
+    # Crud
+
     async def find_one(self, id: str) -> BotEventEntity | Any:
-        print("get_1 mongo id", id)
         document = await self._collection.find_one({"_id": ObjectId(id)})
 
         if not document:
@@ -33,7 +34,6 @@ class BotEventMongoRepository(IBotEventRepository):
         return self.document_to_domain(document)
 
     async def find_all(self) -> List[BotEventEntity] | None:
-        """Получение всех заметок"""
         documents = await self._collection.find({}).to_list()
 
         for document in documents:
@@ -77,7 +77,49 @@ class BotEventMongoRepository(IBotEventRepository):
 
         return [self.document_to_domain(document) for document in documents]
 
+    # Stats
     async def count_by_filter(self, params: dict) -> int | None:
         params = {key: value for (key, value) in params.items() if value != None}
         count = await self._collection.count_documents(params)
         return count
+
+    async def stats_of_bot_by_interval(
+        self,
+        bot_id: int,
+        start_dt: datetime,
+        stop_dt: datetime,
+        stat_list_len: int,
+    ) -> List[int] | None:
+        """Делит временной промежуток на части и группирует количство ивентов по этим
+        промежуткам"""
+
+        # разделяем период на равные периоды в количесе stat_list_len
+        diff = (stop_dt - start_dt) // stat_list_len
+        separated_dates = list([start_dt + idx * diff for idx in range(0, stat_list_len)])
+        periods_list = list([[separated_dates[i], separated_dates[i + 1]] for i in range(len(separated_dates) - 1)])
+        facets = {}
+        for index, period in enumerate(periods_list):
+            facets[f"{str(period[0])}-{str(period[1])}"] = [
+                {"$match": {"bot_id": bot_id, "created_at": {"$gte": period[0], "$lte": period[1]}}},
+                {
+                    "$group": {
+                        "_id": "$bot_id",
+                        "count": {"$sum": 1},
+                    }
+                },
+                {
+                    "$project": {
+                        "_id": 0,
+                        "bot_id": "$_id",
+                        "count": 1,
+                    }
+                },
+            ]
+        pipline = [
+            {
+                "$facet": facets,
+            }
+        ]
+        cursor = await self._collection.aggregate(pipline)
+        documents = await cursor.to_list()
+        return documents

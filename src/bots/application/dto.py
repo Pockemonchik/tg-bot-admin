@@ -1,4 +1,5 @@
 import datetime
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -83,3 +84,9 @@ class BotStatsDTO(BaseModel):
     clients_count: int | None = None
     active_clients_count: int | None = None
     events_count: int | None = None
+    events_dynamic: Any | None = None
+
+
+class FiltePeriodDTO(BaseModel):
+    start_dt: datetime.datetime = datetime.datetime.today().replace(microsecond=0) - datetime.timedelta(days=1)
+    stop_dt: datetime.datetime = datetime.datetime.today().replace(microsecond=0)
